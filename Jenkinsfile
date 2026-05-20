@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB = "tharun118wizard"
+        DOCKER_HUB = "nithinp004"
     }
 
     stages {
@@ -10,7 +10,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/tharun118-wizard/PD-Devops-Project.git'
+                url: 'https://github.com/Nithin2906/devopsproject.git'
             }
         }
 
@@ -73,7 +73,7 @@ stage('Update Backend Image') {
     steps {
         sh """
         kubectl set image deployment/pd-backend \
-        pd-backend=tharun118wizard/pd-backend:${BUILD_NUMBER}
+        pd-backend=nithinp004/pd-backend:${BUILD_NUMBER}
         """
     }
 }
@@ -82,7 +82,7 @@ stage('Update Frontend Image') {
     steps {
         sh """
         kubectl set image deployment/pd-frontend \
-        pd-frontend=tharun118wizard/pd-frontend:${BUILD_NUMBER}
+        pd-frontend=nithinp004/pd-frontend:${BUILD_NUMBER}
         """
     }
 }

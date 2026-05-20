@@ -20,7 +20,8 @@ spec:
       containers:
       - name: pd-backend
 
-        image: tharun118wizard/pd-backend:latest
+        image: plant-backend:latest
+        imagePullPolicy: Never
 
         ports:
         - containerPort: 5000
