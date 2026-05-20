@@ -20,8 +20,8 @@ spec:
       containers:
       - name: pd-frontend
 
-        image: plant-frontend:latest
-        imagePullPolicy: Never
+        image: nithinp004/pd-frontend:latest
+        imagePullPolicy: Always
 
         ports:
         - containerPort: 80

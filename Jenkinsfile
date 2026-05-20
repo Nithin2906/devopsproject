@@ -17,10 +17,8 @@ pipeline {
         stage('Build Backend Docker Image') {
             steps {
                 dir('backend') {
-                    sh '''
-                    docker build \
-                    -t $DOCKER_HUB/pd-backend:$BUILD_NUMBER \
-                    -t $DOCKER_HUB/pd-backend:latest .
+                    bat '''
+                    docker build -t %DOCKER_HUB%/pd-backend:%BUILD_NUMBER% -t %DOCKER_HUB%/pd-backend:latest .
                     '''
                 }
             }
@@ -29,10 +27,8 @@ pipeline {
         stage('Build Frontend Docker Image') {
             steps {
                 dir('frontend') {
-                    sh '''
-                    docker build \
-                    -t $DOCKER_HUB/pd-frontend:$BUILD_NUMBER \
-                    -t $DOCKER_HUB/pd-frontend:latest .
+                    bat '''
+                    docker build -t %DOCKER_HUB%/pd-frontend:%BUILD_NUMBER% -t %DOCKER_HUB%/pd-frontend:latest .
                     '''
                 }
             }
@@ -46,50 +42,52 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
 
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    bat '''
+                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+                    '''
                 }
             }
         }
 
         stage('Push Backend Image') {
             steps {
-                sh '''
-                docker push $DOCKER_HUB/pd-backend:$BUILD_NUMBER
-                docker push $DOCKER_HUB/pd-backend:latest
+                bat '''
+                docker push %DOCKER_HUB%/pd-backend:%BUILD_NUMBER%
+                docker push %DOCKER_HUB%/pd-backend:latest
                 '''
             }
         }
 
         stage('Push Frontend Image') {
             steps {
-                sh '''
-                docker push $DOCKER_HUB/pd-frontend:$BUILD_NUMBER
-                docker push $DOCKER_HUB/pd-frontend:latest
+                bat '''
+                docker push %DOCKER_HUB%/pd-frontend:%BUILD_NUMBER%
+                docker push %DOCKER_HUB%/pd-frontend:latest
                 '''
             }
         }
 
-stage('Update Backend Image') {
-    steps {
-        sh """
-        kubectl set image deployment/pd-backend \
-        pd-backend=nithinp004/pd-backend:${BUILD_NUMBER}
-        """
-    }
-}
-
-stage('Update Frontend Image') {
-    steps {
-        sh """
-        kubectl set image deployment/pd-frontend \
-        pd-frontend=nithinp004/pd-frontend:${BUILD_NUMBER}
-        """
-    }
-}
-
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/ --validate=false'
+                bat '''
+                kubectl apply -f k8s/
+                '''
+            }
+        }
+
+        stage('Update Backend Image') {
+            steps {
+                bat '''
+                kubectl set image deployment/pd-backend pd-backend=nithinp004/pd-backend:%BUILD_NUMBER%
+                '''
+            }
+        }
+
+        stage('Update Frontend Image') {
+            steps {
+                bat '''
+                kubectl set image deployment/pd-frontend pd-frontend=nithinp004/pd-frontend:%BUILD_NUMBER%
+                '''
             }
         }
     }
